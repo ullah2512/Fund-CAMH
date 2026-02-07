@@ -4,9 +4,11 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, '.', '');
+    const port = parseInt(process.env.PORT || '3000', 10);
+    
     return {
       server: {
-        port: 3000,
+        port: port,
         host: '0.0.0.0',
       },
       plugins: [react()],
