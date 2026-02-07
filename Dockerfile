@@ -1,25 +1,30 @@
-# Build stage
-FROM node:20-alpine AS builder
+# Stage 1: Build the application
+FROM node:16 AS build
 
 WORKDIR /app
 
+# Copy package.json and package-lock.json
 COPY package*.json ./
+
+# Install dependencies
 RUN npm install
 
+# Copy the rest of the application code
 COPY . .
+
+# Build the Vite application
 RUN npm run build
 
-# Production stage
-FROM node:20-alpine
+# Stage 2: Serve the application
+FROM serve:latest
 
 WORKDIR /app
 
-RUN npm install -g serve
+# Copy built assets from the build stage
+COPY --from=build /app/dist .
 
-COPY --from=builder /app/dist ./dist
-
-ENV PORT=8080
-
+# Expose port 8080 for the application
 EXPOSE 8080
 
-CMD ["serve", "-s", "dist", "-l", "8080"]
+# Command to serve the application
+CMD ["serve", "-s", ".", "-l", "8080"]
