@@ -1,25 +1,20 @@
-# Build stage
-FROM node:20-alpine AS builder
+# Use official Node.js image.
+FROM node:14
 
-WORKDIR /app
+# Set the working directory.
+WORKDIR /usr/src/app
 
+# Copy package.json and package-lock.json.
 COPY package*.json ./
-RUN npm ci
 
+# Install app dependencies.
+RUN npm install
+
+# Copy the remaining application code.
 COPY . .
-RUN npm run build
 
-# Production stage
-FROM node:20-alpine
-
-WORKDIR /app
-
-RUN npm install -g serve
-
-COPY --from=builder /app/dist ./dist
-
-ENV PORT=8080
-
+# Expose the port the app runs on.
 EXPOSE 8080
 
-CMD ["serve", "-s", "dist", "-l", "8080"]
+# Run the application.
+CMD [ "node", "server.js" ]
