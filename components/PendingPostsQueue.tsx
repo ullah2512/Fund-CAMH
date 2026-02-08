@@ -19,7 +19,7 @@ export const PendingPostsQueue: React.FC<PendingPostsQueueProps> = ({
 
   const handleApprove = async (id: string) => {
     setProcessingId(id);
-    // Optimistic update - hide immediately
+    // Optimistic update - hide immediately with animation
     setHiddenPostIds(prev => new Set(prev).add(id));
     
     try {
@@ -41,7 +41,7 @@ export const PendingPostsQueue: React.FC<PendingPostsQueueProps> = ({
 
   const handleReject = async (id: string) => {
     setProcessingId(id);
-    // Optimistic update - hide immediately
+    // Optimistic update - hide immediately with animation
     setHiddenPostIds(prev => new Set(prev).add(id));
     
     try {
@@ -61,10 +61,7 @@ export const PendingPostsQueue: React.FC<PendingPostsQueueProps> = ({
     }
   };
 
-  // Filter out hidden posts
-  const visiblePosts = pendingPosts.filter(post => !hiddenPostIds.has(post.id));
-
-  if (visiblePosts.length === 0) {
+  if (pendingPosts.length === 0) {
     return (
       <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 mb-8">
         <div className="text-center py-8">
@@ -89,7 +86,7 @@ export const PendingPostsQueue: React.FC<PendingPostsQueueProps> = ({
           <div>
             <h3 className="text-lg font-bold text-slate-800">⏳ Posts Awaiting Approval</h3>
             <p className="text-slate-600 text-sm">
-              {visiblePosts.length} {visiblePosts.length === 1 ? 'post' : 'posts'} pending moderator review
+              {pendingPosts.filter(post => !hiddenPostIds.has(post.id)).length} {pendingPosts.filter(post => !hiddenPostIds.has(post.id)).length === 1 ? 'post' : 'posts'} pending moderator review
             </p>
           </div>
         </div>
@@ -105,7 +102,7 @@ export const PendingPostsQueue: React.FC<PendingPostsQueueProps> = ({
 
       {/* Pending Posts List */}
       <div className="space-y-4">
-        {visiblePosts.map((post) => (
+        {pendingPosts.map((post) => (
           <div 
             key={post.id}
             className={`bg-white rounded-2xl shadow-sm border border-yellow-200 overflow-hidden hover:shadow-md transition-all ${
@@ -190,12 +187,12 @@ export const PendingPostsQueue: React.FC<PendingPostsQueueProps> = ({
         .animate-fade-in {
           animation: fade-in 0.3s ease-out;
         }
-        @keyframes fadeOut {
+        @keyframes fade-out {
           from { opacity: 1; transform: translateY(0); }
           to { opacity: 0; transform: translateY(-10px); }
         }
         .fade-out {
-          animation: fadeOut 0.3s ease-out forwards;
+          animation: fade-out 0.3s ease-out forwards;
         }
       `}</style>
     </div>
