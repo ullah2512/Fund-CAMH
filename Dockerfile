@@ -16,9 +16,12 @@ COPY . .
 RUN npm run build
 
 # Stage 2: Serve the application
-FROM serve:latest
+FROM node:20-alpine
 
 WORKDIR /app
+
+# Install serve globally
+RUN npm install -g serve
 
 # Copy built assets from the build stage
 COPY --from=build /app/dist .
