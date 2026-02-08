@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PrivacyGate from './components/PrivacyGate';
 import PreviewGate from './components/PreviewGate';
+import ModeratorPasscodeModal from './components/ModeratorPasscodeModal';
 import { Header } from './components/Header';
 import { PostForm } from './components/PostForm';
 import { PostList } from './components/PostList';
@@ -30,6 +31,14 @@ const App = () => {
 
     const [posts, setPosts] = useState<Post[]>([]);
     const [moderatorMode, setModeratorMode] = useState(false);
+    const [showModeratorPasscodeModal, setShowModeratorPasscodeModal] = useState(false);
+    const [moderatorAuthenticated, setModeratorAuthenticated] = useState(() => {
+        try {
+            return sessionStorage.getItem('camh_moderator_authenticated') === 'true';
+        } catch {
+            return false;
+        }
+    });
 
     // Subscribe to posts from Firebase
     useEffect(() => {
@@ -45,7 +54,15 @@ const App = () => {
     useEffect(() => {
         const handleKeyPress = (e: KeyboardEvent) => {
             if (e.ctrlKey && e.shiftKey && e.key === 'M') {
-                setModeratorMode(prev => !prev);
+                const isAuthenticated = sessionStorage.getItem('camh_moderator_authenticated') === 'true';
+                
+                if (!isAuthenticated) {
+                    // Show passcode modal
+                    setShowModeratorPasscodeModal(true);
+                } else {
+                    // Toggle moderator mode off
+                    setModeratorMode(prev => !prev);
+                }
             }
         };
         window.addEventListener('keydown', handleKeyPress);
@@ -91,11 +108,23 @@ const App = () => {
         }
     };
 
+    const handleModeratorAuthentication = () => {
+        setModeratorAuthenticated(true);
+        setModeratorMode(true);
+        setShowModeratorPasscodeModal(false);
+    };
+
     return (
         <PrivacyGate privacyAccepted={privacyAccepted} setPrivacyAccepted={setPrivacyAccepted}>
             {previewUnlocked ? (
                 <div className="min-h-screen bg-slate-50">
                     <Header isLive={true} />
+                    {moderatorMode && (
+                        <div className="fixed top-4 right-4 z-50 bg-red-500 text-white px-4 py-2 rounded-full shadow-lg text-xs font-bold flex items-center gap-2">
+                            <span>🛡️</span>
+                            <span>Moderator Mode Active</span>
+                        </div>
+                    )}
                     <main className="max-w-5xl mx-auto px-4 py-8">
                         <PostForm onAddPost={handleAddPost} />
                         <PostList 
@@ -105,6 +134,11 @@ const App = () => {
                             moderatorMode={moderatorMode}
                         />
                     </main>
+                    <ModeratorPasscodeModal
+                        isOpen={showModeratorPasscodeModal}
+                        onClose={() => setShowModeratorPasscodeModal(false)}
+                        onSuccess={handleModeratorAuthentication}
+                    />
                 </div>
             ) : (
                 <PreviewGate onUnlock={handlePreviewUnlock} />
