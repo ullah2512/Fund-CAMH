@@ -11,6 +11,7 @@ export const PostForm: React.FC<PostFormProps> = ({ onAddPost }) => {
   const [content, setContent] = useState('');
   const [category, setCategory] = useState<Category>('General Support');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,6 +24,8 @@ export const PostForm: React.FC<PostFormProps> = ({ onAddPost }) => {
       onAddPost(content, category, aiReflection);
       setContent('');
       setCategory('General Support');
+      setShowSuccessMessage(true);
+      setTimeout(() => setShowSuccessMessage(false), 5000);
     } catch (error) {
       console.error("Failed to post:", error);
     } finally {
@@ -36,6 +39,21 @@ export const PostForm: React.FC<PostFormProps> = ({ onAddPost }) => {
         <i className="fa-solid fa-pen-to-square text-indigo-500"></i>
         Share a Helpful Thought or Resource
       </h2>
+      
+      {showSuccessMessage && (
+        <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-xl flex items-start gap-3 animate-fade-in">
+          <i className="fa-solid fa-circle-check text-green-600 text-xl mt-0.5"></i>
+          <div>
+            <p className="text-green-800 font-semibold text-sm">
+              Thank you for sharing! 
+            </p>
+            <p className="text-green-700 text-sm mt-1">
+              Your post will be reviewed before appearing in the community feed.
+            </p>
+          </div>
+        </div>
+      )}
+      
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <textarea

@@ -9,6 +9,7 @@ export interface Post {
   timestamp: number;
   aiReflection?: string;
   helpfulCount?: number;
+  status?: "pending" | "approved" | "rejected";
 }
 
 export interface GeminiResponse {
