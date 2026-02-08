@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Post } from '../types';
 
 interface PendingPostsQueueProps {
@@ -15,15 +15,39 @@ export const PendingPostsQueue: React.FC<PendingPostsQueueProps> = ({
 }) => {
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [hiddenPostIds, setHiddenPostIds] = useState<Set<string>>(new Set());
+  const successTimeoutRef = useRef<number | null>(null);
+
+  // Clean up timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (successTimeoutRef.current) {
+        clearTimeout(successTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleApprove = async (id: string) => {
     setProcessingId(id);
+    // Optimistic update - hide immediately with animation
+    setHiddenPostIds(prev => new Set(prev).add(id));
+    
     try {
       await onApprovePost(id);
       setSuccessMessage('Post approved successfully!');
-      setTimeout(() => setSuccessMessage(null), 3000);
+      // Clear any existing timeout
+      if (successTimeoutRef.current) {
+        clearTimeout(successTimeoutRef.current);
+      }
+      successTimeoutRef.current = window.setTimeout(() => setSuccessMessage(null), 3000);
     } catch (error) {
       console.error('Failed to approve post:', error);
+      // Restore post on error
+      setHiddenPostIds(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(id);
+        return newSet;
+      });
     } finally {
       setProcessingId(null);
     }
@@ -31,16 +55,31 @@ export const PendingPostsQueue: React.FC<PendingPostsQueueProps> = ({
 
   const handleReject = async (id: string) => {
     setProcessingId(id);
+    // Optimistic update - hide immediately with animation
+    setHiddenPostIds(prev => new Set(prev).add(id));
+    
     try {
       await onRejectPost(id);
       setSuccessMessage('Post rejected and removed.');
-      setTimeout(() => setSuccessMessage(null), 3000);
+      // Clear any existing timeout
+      if (successTimeoutRef.current) {
+        clearTimeout(successTimeoutRef.current);
+      }
+      successTimeoutRef.current = window.setTimeout(() => setSuccessMessage(null), 3000);
     } catch (error) {
       console.error('Failed to reject post:', error);
+      // Restore post on error
+      setHiddenPostIds(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(id);
+        return newSet;
+      });
     } finally {
       setProcessingId(null);
     }
   };
+
+  const activePendingCount = pendingPosts.filter(post => !hiddenPostIds.has(post.id)).length;
 
   if (pendingPosts.length === 0) {
     return (
@@ -67,7 +106,7 @@ export const PendingPostsQueue: React.FC<PendingPostsQueueProps> = ({
           <div>
             <h3 className="text-lg font-bold text-slate-800">⏳ Posts Awaiting Approval</h3>
             <p className="text-slate-600 text-sm">
-              {pendingPosts.length} {pendingPosts.length === 1 ? 'post' : 'posts'} pending moderator review
+              {activePendingCount} {activePendingCount === 1 ? 'post' : 'posts'} pending moderator review
             </p>
           </div>
         </div>
@@ -86,7 +125,9 @@ export const PendingPostsQueue: React.FC<PendingPostsQueueProps> = ({
         {pendingPosts.map((post) => (
           <div 
             key={post.id}
-            className="bg-white rounded-2xl shadow-sm border border-yellow-200 overflow-hidden hover:shadow-md transition-all"
+            className={`bg-white rounded-2xl shadow-sm border border-yellow-200 overflow-hidden hover:shadow-md transition-all ${
+              hiddenPostIds.has(post.id) ? 'animate-fade-out' : ''
+            }`}
           >
             {/* Post Content */}
             <div className="p-6">
@@ -165,6 +206,13 @@ export const PendingPostsQueue: React.FC<PendingPostsQueueProps> = ({
         }
         .animate-fade-in {
           animation: fade-in 0.3s ease-out;
+        }
+        @keyframes fade-out {
+          from { opacity: 1; transform: translateY(0); }
+          to { opacity: 0; transform: translateY(-10px); }
+        }
+        .animate-fade-out {
+          animation: fade-out 0.3s ease-out forwards;
         }
       `}</style>
     </div>
