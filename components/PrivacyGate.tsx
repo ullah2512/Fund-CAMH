@@ -9,7 +9,11 @@ interface PrivacyGateProps {
 export const PrivacyGate: React.FC<PrivacyGateProps> = ({ privacyAccepted, setPrivacyAccepted, children }) => {
   const handleAccept = () => {
     // Save acceptance to localStorage
-    localStorage.setItem('camh_privacy_accepted', 'true');
+    try {
+      localStorage.setItem('camh_privacy_accepted', 'true');
+    } catch {
+      // Ignore localStorage errors in environments where it's unavailable
+    }
     setPrivacyAccepted(true);
   };
 
