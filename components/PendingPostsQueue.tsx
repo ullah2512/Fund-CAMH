@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Post } from '../types';
 
 interface PendingPostsQueueProps {
@@ -16,6 +16,16 @@ export const PendingPostsQueue: React.FC<PendingPostsQueueProps> = ({
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [hiddenPostIds, setHiddenPostIds] = useState<Set<string>>(new Set());
+  const successTimeoutRef = useRef<number | null>(null);
+
+  // Clean up timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (successTimeoutRef.current) {
+        clearTimeout(successTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleApprove = async (id: string) => {
     setProcessingId(id);
@@ -25,7 +35,11 @@ export const PendingPostsQueue: React.FC<PendingPostsQueueProps> = ({
     try {
       await onApprovePost(id);
       setSuccessMessage('Post approved successfully!');
-      setTimeout(() => setSuccessMessage(null), 3000);
+      // Clear any existing timeout
+      if (successTimeoutRef.current) {
+        clearTimeout(successTimeoutRef.current);
+      }
+      successTimeoutRef.current = window.setTimeout(() => setSuccessMessage(null), 3000);
     } catch (error) {
       console.error('Failed to approve post:', error);
       // Restore post on error
@@ -47,7 +61,11 @@ export const PendingPostsQueue: React.FC<PendingPostsQueueProps> = ({
     try {
       await onRejectPost(id);
       setSuccessMessage('Post rejected and removed.');
-      setTimeout(() => setSuccessMessage(null), 3000);
+      // Clear any existing timeout
+      if (successTimeoutRef.current) {
+        clearTimeout(successTimeoutRef.current);
+      }
+      successTimeoutRef.current = window.setTimeout(() => setSuccessMessage(null), 3000);
     } catch (error) {
       console.error('Failed to reject post:', error);
       // Restore post on error
