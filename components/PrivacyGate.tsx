@@ -18,6 +18,11 @@ export const PrivacyGate: React.FC<PrivacyGateProps> = ({ privacyAccepted, setPr
     setPrivacyAccepted(true);
   };
 
+  const handleDisagree = () => {
+    // Redirect to CAMH website
+    window.location.href = 'https://www.camh.ca/';
+  };
+
   // If already accepted, just render children
   if (privacyAccepted) {
     return <>{children}</>;
@@ -107,18 +112,27 @@ export const PrivacyGate: React.FC<PrivacyGateProps> = ({ privacyAccepted, setPr
           </div>
         </div>
 
-        {/* Accept Button */}
-        <button
-          onClick={handleAccept}
-          className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-5 rounded-2xl shadow-xl transition-all active:scale-95 flex items-center justify-center gap-3 text-lg"
-        >
-          <i className="fa-solid fa-check-circle text-sm"></i>
-          I Agree
-        </button>
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row gap-3">
+          <button
+            onClick={handleDisagree}
+            className="w-full sm:w-1/2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-5 rounded-2xl shadow-md transition-all active:scale-95 flex items-center justify-center gap-3 text-lg border border-slate-200"
+          >
+            <i className="fa-solid fa-times-circle text-sm"></i>
+            I Disagree
+          </button>
+          <button
+            onClick={handleAccept}
+            className="w-full sm:w-1/2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-5 rounded-2xl shadow-xl transition-all active:scale-95 flex items-center justify-center gap-3 text-lg"
+          >
+            <i className="fa-solid fa-check-circle text-sm"></i>
+            I Agree
+          </button>
+        </div>
 
         <div className="mt-6 text-center">
           <p className="text-[10px] font-medium text-slate-400 uppercase tracking-wider">
-            By continuing, you accept our privacy policy
+            You must accept our privacy policy to use this platform
           </p>
         </div>
       </div>
