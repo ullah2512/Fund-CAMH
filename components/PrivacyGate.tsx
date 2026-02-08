@@ -137,7 +137,7 @@ export const PrivacyGate: React.FC<PrivacyGateProps> = ({ children }) => {
 
           <section>
             <h3 className="text-lg font-bold text-slate-900 mb-3 flex items-center gap-2">
-              <i className="fa-solid fa-hands-helping text-indigo-600 text-sm"></i>
+              <i className="fa-solid fa-handshake-angle text-indigo-600 text-sm"></i>
               Third-Party Services
             </h3>
             <p className="text-slate-700 text-sm leading-relaxed">
