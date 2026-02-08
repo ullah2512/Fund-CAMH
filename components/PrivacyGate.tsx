@@ -45,6 +45,15 @@ export const PrivacyGate: React.FC<PrivacyGateProps> = ({ privacyAccepted, setPr
         {/* Scrollable Privacy Policy Content */}
         <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200 max-h-[400px] overflow-y-auto mb-6 space-y-6">
           <div>
+            <h3 className="text-lg font-bold text-slate-900 mb-2">About This Platform</h3>
+            <p className="text-slate-600 text-sm leading-relaxed">
+              This is an independent community platform that supports CAMH Foundation through fundraising. 
+              This platform is not officially affiliated with or endorsed by CAMH. The project is community-driven 
+              and all fundraising proceeds are directed to CAMH to support mental health initiatives.
+            </p>
+          </div>
+
+          <div>
             <h3 className="text-lg font-bold text-slate-900 mb-2">Data Collection</h3>
             <p className="text-slate-600 text-sm leading-relaxed">
               We collect minimal information necessary to provide our community support platform. This includes:
@@ -64,7 +73,7 @@ export const PrivacyGate: React.FC<PrivacyGateProps> = ({ privacyAccepted, setPr
             <p className="text-slate-600 text-sm leading-relaxed">
               Posts you share on the community feed are visible to all users of this platform. Please do not include 
               personal information in your posts. All community contributions are stored to provide a supportive 
-              environment for mental health awareness and fundraising for CAMH.
+              environment for mental health awareness.
             </p>
           </div>
 
@@ -101,7 +110,10 @@ export const PrivacyGate: React.FC<PrivacyGateProps> = ({ privacyAccepted, setPr
             <h3 className="text-lg font-bold text-slate-900 mb-2">Contact Information</h3>
             <p className="text-slate-600 text-sm leading-relaxed">
               If you have questions about this privacy policy or wish to exercise your privacy rights, please contact 
-              the project team through the GitHub repository or CAMH's official channels.
+              us at: <strong>TBD</strong> (contact information will be available soon).
+            </p>
+            <p className="text-slate-600 text-sm leading-relaxed mt-2">
+              For questions about CAMH or their services, please visit their official website directly.
             </p>
           </div>
 
