@@ -15,15 +15,25 @@ export const PendingPostsQueue: React.FC<PendingPostsQueueProps> = ({
 }) => {
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [hiddenPostIds, setHiddenPostIds] = useState<Set<string>>(new Set());
 
   const handleApprove = async (id: string) => {
     setProcessingId(id);
+    // Optimistic update - hide immediately
+    setHiddenPostIds(prev => new Set(prev).add(id));
+    
     try {
       await onApprovePost(id);
       setSuccessMessage('Post approved successfully!');
       setTimeout(() => setSuccessMessage(null), 3000);
     } catch (error) {
       console.error('Failed to approve post:', error);
+      // Restore post on error
+      setHiddenPostIds(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(id);
+        return newSet;
+      });
     } finally {
       setProcessingId(null);
     }
@@ -31,18 +41,30 @@ export const PendingPostsQueue: React.FC<PendingPostsQueueProps> = ({
 
   const handleReject = async (id: string) => {
     setProcessingId(id);
+    // Optimistic update - hide immediately
+    setHiddenPostIds(prev => new Set(prev).add(id));
+    
     try {
       await onRejectPost(id);
       setSuccessMessage('Post rejected and removed.');
       setTimeout(() => setSuccessMessage(null), 3000);
     } catch (error) {
       console.error('Failed to reject post:', error);
+      // Restore post on error
+      setHiddenPostIds(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(id);
+        return newSet;
+      });
     } finally {
       setProcessingId(null);
     }
   };
 
-  if (pendingPosts.length === 0) {
+  // Filter out hidden posts
+  const visiblePosts = pendingPosts.filter(post => !hiddenPostIds.has(post.id));
+
+  if (visiblePosts.length === 0) {
     return (
       <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 mb-8">
         <div className="text-center py-8">
@@ -67,7 +89,7 @@ export const PendingPostsQueue: React.FC<PendingPostsQueueProps> = ({
           <div>
             <h3 className="text-lg font-bold text-slate-800">⏳ Posts Awaiting Approval</h3>
             <p className="text-slate-600 text-sm">
-              {pendingPosts.length} {pendingPosts.length === 1 ? 'post' : 'posts'} pending moderator review
+              {visiblePosts.length} {visiblePosts.length === 1 ? 'post' : 'posts'} pending moderator review
             </p>
           </div>
         </div>
@@ -83,10 +105,12 @@ export const PendingPostsQueue: React.FC<PendingPostsQueueProps> = ({
 
       {/* Pending Posts List */}
       <div className="space-y-4">
-        {pendingPosts.map((post) => (
+        {visiblePosts.map((post) => (
           <div 
             key={post.id}
-            className="bg-white rounded-2xl shadow-sm border border-yellow-200 overflow-hidden hover:shadow-md transition-all"
+            className={`bg-white rounded-2xl shadow-sm border border-yellow-200 overflow-hidden hover:shadow-md transition-all ${
+              hiddenPostIds.has(post.id) ? 'fade-out' : ''
+            }`}
           >
             {/* Post Content */}
             <div className="p-6">
@@ -165,6 +189,13 @@ export const PendingPostsQueue: React.FC<PendingPostsQueueProps> = ({
         }
         .animate-fade-in {
           animation: fade-in 0.3s ease-out;
+        }
+        @keyframes fadeOut {
+          from { opacity: 1; transform: translateY(0); }
+          to { opacity: 0; transform: translateY(-10px); }
+        }
+        .fade-out {
+          animation: fadeOut 0.3s ease-out forwards;
         }
       `}</style>
     </div>
