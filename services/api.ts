@@ -35,7 +35,6 @@ export const api = {
         const posts: Post[] = [];
         snapshot.forEach((docSnap) => {
           const data = docSnap.data();
-          const status = data.status || 'approved';
           
           // Only include posts that are approved or have no status (backwards compatibility)
           if (!data.status || data.status === 'approved') {
@@ -47,7 +46,7 @@ export const api = {
               timestamp: data.timestamp,
               aiReflection: data.aiReflection,
               helpfulCount: data.helpfulCount || 0,
-              status: status
+              status: data.status || 'approved'
             } as Post);
           }
         });
