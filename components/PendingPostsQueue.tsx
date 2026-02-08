@@ -61,6 +61,8 @@ export const PendingPostsQueue: React.FC<PendingPostsQueueProps> = ({
     }
   };
 
+  const activePendingCount = pendingPosts.filter(post => !hiddenPostIds.has(post.id)).length;
+
   if (pendingPosts.length === 0) {
     return (
       <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 mb-8">
@@ -86,7 +88,7 @@ export const PendingPostsQueue: React.FC<PendingPostsQueueProps> = ({
           <div>
             <h3 className="text-lg font-bold text-slate-800">⏳ Posts Awaiting Approval</h3>
             <p className="text-slate-600 text-sm">
-              {pendingPosts.filter(post => !hiddenPostIds.has(post.id)).length} {pendingPosts.filter(post => !hiddenPostIds.has(post.id)).length === 1 ? 'post' : 'posts'} pending moderator review
+              {activePendingCount} {activePendingCount === 1 ? 'post' : 'posts'} pending moderator review
             </p>
           </div>
         </div>
@@ -106,7 +108,7 @@ export const PendingPostsQueue: React.FC<PendingPostsQueueProps> = ({
           <div 
             key={post.id}
             className={`bg-white rounded-2xl shadow-sm border border-yellow-200 overflow-hidden hover:shadow-md transition-all ${
-              hiddenPostIds.has(post.id) ? 'fade-out' : ''
+              hiddenPostIds.has(post.id) ? 'animate-fade-out' : ''
             }`}
           >
             {/* Post Content */}
@@ -191,7 +193,7 @@ export const PendingPostsQueue: React.FC<PendingPostsQueueProps> = ({
           from { opacity: 1; transform: translateY(0); }
           to { opacity: 0; transform: translateY(-10px); }
         }
-        .fade-out {
+        .animate-fade-out {
           animation: fade-out 0.3s ease-out forwards;
         }
       `}</style>
