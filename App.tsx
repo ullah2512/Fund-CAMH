@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Header } from './components/Header';
 import { PostForm } from './components/PostForm';
 import { PostList } from './components/PostList';
+import { PrivateGate } from './components/PrivateGate';
 import { Post, Category } from './types';
 import { api } from './services/api';
 import { isConfigured } from './services/firebase';
@@ -14,9 +15,18 @@ const App: React.FC = () => {
   const [modPassword, setModPassword] = useState<string>('');
   const [modError, setModError] = useState<boolean>(false);
   const [isLive, setIsLive] = useState<boolean>(false);
+  const [showPreviewGate, setShowPreviewGate] = useState<boolean>(true);
 
   const donationUrl = "https://give.camh.ca/site/Donation2?df_id=2463&2463.donation=form1";
   const MOD_SECRET = "CAMH-ADMIN-2025";
+
+  // Check if user has already entered passcode on mount
+  useEffect(() => {
+    const previewAccepted = localStorage.getItem('camh_preview_accepted');
+    if (previewAccepted === 'true') {
+      setShowPreviewGate(false);
+    }
+  }, []);
 
   useEffect(() => {
     if (isConfigured) {
@@ -87,6 +97,15 @@ const App: React.FC = () => {
       setTimeout(() => setModError(false), 2000);
     }
   };
+
+  const handlePreviewUnlock = () => {
+    setShowPreviewGate(false);
+  };
+
+  // Show preview gate if user hasn't unlocked yet
+  if (showPreviewGate) {
+    return <PrivateGate onUnlock={handlePreviewUnlock} />;
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col font-sans selection:bg-indigo-100 selection:text-indigo-900 overflow-x-hidden">
