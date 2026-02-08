@@ -97,3 +97,5 @@ export const PreviewGate: React.FC<PreviewGateProps> = ({ onUnlock }) => {
     </div>
   );
 };
+
+export default PreviewGate;

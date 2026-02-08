@@ -1,16 +1,24 @@
 import React from 'react';
 
 interface PrivacyGateProps {
-  onAccept: () => void;
+  privacyAccepted: boolean;
+  setPrivacyAccepted: (accepted: boolean) => void;
+  children: React.ReactNode;
 }
 
-export const PrivacyGate: React.FC<PrivacyGateProps> = ({ onAccept }) => {
+export const PrivacyGate: React.FC<PrivacyGateProps> = ({ privacyAccepted, setPrivacyAccepted, children }) => {
   const handleAccept = () => {
     // Save acceptance to localStorage
     localStorage.setItem('camh_privacy_accepted', 'true');
-    onAccept();
+    setPrivacyAccepted(true);
   };
 
+  // If already accepted, just render children
+  if (privacyAccepted) {
+    return <>{children}</>;
+  }
+
+  // Otherwise show the privacy gate modal
   return (
     <div className="fixed inset-0 z-[300] bg-slate-900/90 backdrop-blur-xl flex items-center justify-center p-4 overflow-y-auto">
       <div className="max-w-2xl w-full bg-white rounded-[2.5rem] shadow-2xl p-8 md:p-10 border border-slate-200 my-8">
@@ -112,3 +120,5 @@ export const PrivacyGate: React.FC<PrivacyGateProps> = ({ onAccept }) => {
     </div>
   );
 };
+
+export default PrivacyGate;
