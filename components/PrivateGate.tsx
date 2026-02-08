@@ -5,6 +5,7 @@ interface PrivateGateProps {
   onUnlock: () => void;
 }
 
+export const PREVIEW_ACCEPTED_KEY = 'camh_preview_accepted';
 const PREVIEW_PASSCODE = 'CAMH-2025';
 
 export const PrivateGate: React.FC<PrivateGateProps> = ({ onUnlock }) => {
@@ -16,7 +17,7 @@ export const PrivateGate: React.FC<PrivateGateProps> = ({ onUnlock }) => {
     // Check if the passcode matches
     if (code === PREVIEW_PASSCODE) {
       // Save to localStorage so user doesn't see gate again
-      localStorage.setItem('camh_preview_accepted', 'true');
+      localStorage.setItem(PREVIEW_ACCEPTED_KEY, 'true');
       onUnlock();
     } else {
       setError(true);

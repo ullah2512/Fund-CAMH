@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Header } from './components/Header';
 import { PostForm } from './components/PostForm';
 import { PostList } from './components/PostList';
-import { PrivateGate } from './components/PrivateGate';
+import { PrivateGate, PREVIEW_ACCEPTED_KEY } from './components/PrivateGate';
 import { Post, Category } from './types';
 import { api } from './services/api';
 import { isConfigured } from './services/firebase';
@@ -22,7 +22,7 @@ const App: React.FC = () => {
 
   // Check if user has already entered passcode on mount
   useEffect(() => {
-    const previewAccepted = localStorage.getItem('camh_preview_accepted');
+    const previewAccepted = localStorage.getItem(PREVIEW_ACCEPTED_KEY);
     if (previewAccepted === 'true') {
       setShowPreviewGate(false);
     }
