@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Header } from './components/Header';
 import { PostForm } from './components/PostForm';
 import { PostList } from './components/PostList';
+import { PreviewGate } from './components/PreviewGate';
 import { Post, Category } from './types';
 import { api } from './services/api';
 import { isConfigured } from './services/firebase';
@@ -14,9 +15,18 @@ const App: React.FC = () => {
   const [modPassword, setModPassword] = useState<string>('');
   const [modError, setModError] = useState<boolean>(false);
   const [isLive, setIsLive] = useState<boolean>(false);
+  const [isUnlocked, setIsUnlocked] = useState<boolean>(false);
 
   const donationUrl = "https://give.camh.ca/site/Donation2?df_id=2463&2463.donation=form1";
   const MOD_SECRET = "CAMH-ADMIN-2025";
+
+  // Check if the preview gate has been unlocked before
+  useEffect(() => {
+    const unlocked = localStorage.getItem('camh_preview_unlocked');
+    if (unlocked === 'true') {
+      setIsUnlocked(true);
+    }
+  }, []);
 
   useEffect(() => {
     if (isConfigured) {
@@ -89,7 +99,12 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col font-sans selection:bg-indigo-100 selection:text-indigo-900 overflow-x-hidden">
+    <>
+      {/* Preview Gate - Show if not unlocked */}
+      {!isUnlocked && <PreviewGate onUnlock={() => setIsUnlocked(true)} />}
+
+      {/* Main App Content */}
+      <div className="min-h-screen bg-slate-50 flex flex-col font-sans selection:bg-indigo-100 selection:text-indigo-900 overflow-x-hidden">
       <Header isLive={isLive && isConfigured} />
 
       {/* Admin Login Modal */}
@@ -218,6 +233,7 @@ const App: React.FC = () => {
         }
       `}</style>
     </div>
+    </>
   );
 };
 
