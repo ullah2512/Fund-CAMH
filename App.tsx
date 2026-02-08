@@ -24,6 +24,12 @@ const App = () => {
     });
 
     const handlePreviewUnlock = () => {
+        try {
+            localStorage.setItem('camh_preview_unlocked', 'true');
+        } catch {
+            // localStorage may be unavailable in SSR, private browsing, or restrictive environments
+            // Silently ignore as the in-memory state still works
+        }
         setPreviewUnlocked(true);
     };
 
