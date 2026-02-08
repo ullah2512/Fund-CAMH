@@ -7,6 +7,8 @@ const App = () => {
         try {
             return localStorage.getItem('camh_privacy_accepted') === 'true';
         } catch {
+            // localStorage may be unavailable in SSR, private browsing, or restrictive environments
+            // Default to false (show privacy gate) for safety
             return false;
         }
     });

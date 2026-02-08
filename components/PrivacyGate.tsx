@@ -12,7 +12,8 @@ export const PrivacyGate: React.FC<PrivacyGateProps> = ({ privacyAccepted, setPr
     try {
       localStorage.setItem('camh_privacy_accepted', 'true');
     } catch {
-      // Ignore localStorage errors in environments where it's unavailable
+      // localStorage may be unavailable in SSR, private browsing, or restrictive environments
+      // Silently ignore as the in-memory state (setPrivacyAccepted) still works
     }
     setPrivacyAccepted(true);
   };
