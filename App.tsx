@@ -38,8 +38,8 @@ const App = () => {
             {previewUnlocked ? (
                 <div className="min-h-screen bg-slate-50 flex items-center justify-center p-8">
                     <div className="text-center">
-                        <div className="w-24 h-24 bg-green-600 rounded-full flex items-center justify-center text-white mx-auto mb-6 shadow-lg">
-                            <i className="fa-solid fa-check text-4xl"></i>
+                        <div className="w-24 h-24 bg-green-600 rounded-full flex items-center justify-center text-white mx-auto mb-6 shadow-lg" aria-label="Success">
+                            <i className="fa-solid fa-check text-4xl" aria-hidden="true"></i>
                         </div>
                         <h1 className="text-4xl font-black text-slate-900 mb-4">Preview Unlocked!</h1>
                         <p className="text-slate-600 text-lg">
