@@ -28,26 +28,28 @@ export const api = {
 
     try {
       const postsRef = collection(db, POSTS_COLLECTION);
-      const q = query(
-        postsRef, 
-        where('status', 'in', ['approved', null]),
-        orderBy('timestamp', 'desc')
-      );
+      // Query all posts, but filter on client side for approved or null status
+      const q = query(postsRef, orderBy('timestamp', 'desc'));
 
       return onSnapshot(q, (snapshot) => {
         const posts: Post[] = [];
         snapshot.forEach((docSnap) => {
           const data = docSnap.data();
-          posts.push({
-            id: docSnap.id,
-            author: data.author,
-            content: data.content,
-            category: data.category,
-            timestamp: data.timestamp,
-            aiReflection: data.aiReflection,
-            helpfulCount: data.helpfulCount || 0,
-            status: data.status || 'approved'
-          } as Post);
+          const status = data.status || 'approved';
+          
+          // Only include posts that are approved or have no status (backwards compatibility)
+          if (!data.status || data.status === 'approved') {
+            posts.push({
+              id: docSnap.id,
+              author: data.author,
+              content: data.content,
+              category: data.category,
+              timestamp: data.timestamp,
+              aiReflection: data.aiReflection,
+              helpfulCount: data.helpfulCount || 0,
+              status: status
+            } as Post);
+          }
         });
         callback(posts);
       }, (error) => {
