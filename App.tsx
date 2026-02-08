@@ -4,6 +4,7 @@ import { Header } from './components/Header';
 import { PostForm } from './components/PostForm';
 import { PostList } from './components/PostList';
 import { PreviewGate } from './components/PreviewGate';
+import { PrivacyGate } from './components/PrivacyGate';
 import { Post, Category } from './types';
 import { api } from './services/api';
 import { isConfigured } from './services/firebase';
@@ -16,9 +17,18 @@ const App: React.FC = () => {
   const [modError, setModError] = useState<boolean>(false);
   const [isLive, setIsLive] = useState<boolean>(false);
   const [isUnlocked, setIsUnlocked] = useState<boolean>(false);
+  const [privacyAccepted, setPrivacyAccepted] = useState<boolean>(false);
 
   const donationUrl = "https://give.camh.ca/site/Donation2?df_id=2463&2463.donation=form1";
   const MOD_SECRET = "CAMH-ADMIN-2025";
+
+  // Check if privacy policy has been accepted before
+  useEffect(() => {
+    const accepted = localStorage.getItem('camh_privacy_accepted');
+    if (accepted === 'true') {
+      setPrivacyAccepted(true);
+    }
+  }, []);
 
   // Check if the preview gate has been unlocked before
   useEffect(() => {
@@ -100,6 +110,9 @@ const App: React.FC = () => {
 
   return (
     <>
+      {/* Privacy Gate - Show if not accepted */}
+      {!privacyAccepted && <PrivacyGate onAccept={() => setPrivacyAccepted(true)} />}
+
       {/* Preview Gate - Show if not unlocked */}
       {!isUnlocked && <PreviewGate onUnlock={() => setIsUnlocked(true)} />}
 
