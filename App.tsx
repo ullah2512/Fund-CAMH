@@ -5,6 +5,7 @@ import ModeratorPasscodeModal from './components/ModeratorPasscodeModal';
 import { Header } from './components/Header';
 import { PostForm } from './components/PostForm';
 import { PostList } from './components/PostList';
+import { PendingPostsQueue } from './components/PendingPostsQueue';
 import { Post, Category } from './types';
 import { api } from './services/api';
 
@@ -30,6 +31,7 @@ const App = () => {
     });
 
     const [posts, setPosts] = useState<Post[]>([]);
+    const [pendingPosts, setPendingPosts] = useState<Post[]>([]);
     const [moderatorMode, setModeratorMode] = useState(false);
     const [showModeratorPasscodeModal, setShowModeratorPasscodeModal] = useState(false);
     const [moderatorAuthenticated, setModeratorAuthenticated] = useState(() => {
@@ -49,6 +51,18 @@ const App = () => {
             return unsubscribe;
         }
     }, [previewUnlocked]);
+
+    // Subscribe to pending posts when in moderator mode
+    useEffect(() => {
+        if (previewUnlocked && moderatorMode) {
+            const unsubscribe = api.subscribeToPendingPosts((newPendingPosts) => {
+                setPendingPosts(newPendingPosts);
+            });
+            return unsubscribe;
+        } else {
+            setPendingPosts([]);
+        }
+    }, [previewUnlocked, moderatorMode]);
 
     // Toggle moderator mode with keyboard shortcut (Ctrl+Shift+M)
     useEffect(() => {
@@ -114,6 +128,22 @@ const App = () => {
         setShowModeratorPasscodeModal(false);
     };
 
+    const handleApprovePost = async (id: string) => {
+        try {
+            await api.approvePost(id);
+        } catch (error) {
+            console.error('Failed to approve post:', error);
+        }
+    };
+
+    const handleRejectPost = async (id: string) => {
+        try {
+            await api.deletePost(id);
+        } catch (error) {
+            console.error('Failed to reject post:', error);
+        }
+    };
+
     return (
         <PrivacyGate privacyAccepted={privacyAccepted} setPrivacyAccepted={setPrivacyAccepted}>
             {previewUnlocked ? (
@@ -127,6 +157,13 @@ const App = () => {
                     )}
                     <main className="max-w-5xl mx-auto px-4 py-8">
                         <PostForm onAddPost={handleAddPost} />
+                        {moderatorMode && (
+                            <PendingPostsQueue
+                                pendingPosts={pendingPosts}
+                                onApprovePost={handleApprovePost}
+                                onRejectPost={handleRejectPost}
+                            />
+                        )}
                         <PostList 
                             posts={posts}
                             onDeletePost={handleDeletePost}
