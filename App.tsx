@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Header } from './components/Header';
 import { PostForm } from './components/PostForm';
 import { PostList } from './components/PostList';
+import { PrivacyGate } from './components/PrivacyGate';
 import { Post, Category } from './types';
 import { api } from './services/api';
 import { isConfigured } from './services/firebase';
@@ -89,8 +90,9 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col font-sans selection:bg-indigo-100 selection:text-indigo-900 overflow-x-hidden">
-      <Header isLive={isLive && isConfigured} />
+    <PrivacyGate>
+      <div className="min-h-screen bg-slate-50 flex flex-col font-sans selection:bg-indigo-100 selection:text-indigo-900 overflow-x-hidden">
+        <Header isLive={isLive && isConfigured} />
 
       {/* Admin Login Modal */}
       {showModAuth && (
@@ -218,6 +220,7 @@ const App: React.FC = () => {
         }
       `}</style>
     </div>
+    </PrivacyGate>
   );
 };
 
