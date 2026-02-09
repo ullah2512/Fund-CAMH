@@ -25,7 +25,7 @@ const generateContextAwareFallback = (content: string, category: string): string
     hope: ['hope', 'better', 'improve', 'forward', 'future', 'tomorrow'],
     support: ['help', 'support', 'together', 'community', 'friend', 'talk'],
     healing: ['heal', 'recover', 'progress', 'journey', 'step', 'process'],
-    gratitude: ['thank', 'grateful', 'appreciate', 'blessed', 'grateful'],
+    gratitude: ['thank', 'grateful', 'appreciate', 'blessed'],
   };
 
   // Find matching themes
