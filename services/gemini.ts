@@ -1,50 +1,68 @@
-// Updated implementation for gemini.ts
+// Updated model name
+const MODEL_NAME = "gemini-2.0-flash";
+const FALLBACK_MODEL_NAME = "gemini-1.5-flash";
 
-const modelName = 'gemini-2.0-flash';
-const temperature = 0.9;
+// Temperature setting
+const TEMPERATURE = 0.9;
 
-function contextAwareFallback(error) {
-    switch (error.category) {
-        case 'validation':
-            console.error('Validation error occurred:', error.message);
-            // Handle validation specific fallback
-            break;
-        case 'network':
-            console.error('Network error occurred:', error.message);
-            // Handle network specific fallback
-            break;
-        default:
-            console.error('Unknown error occurred:', error.message);
-            // Handle default case
-            break;
+// Error classification enum
+const ErrorTypes = {
+    API_KEY: 'API_KEY',
+    QUOTA: 'QUOTA',
+    NETWORK: 'NETWORK',
+    RESPONSE: 'RESPONSE'
+};
+
+// Function to generate fallback messages
+function generateFallbackMessages(theme) {
+    const messages = {
+        Anxiety: ["Remember, it's okay to feel anxious. You're not alone.", "Take a deep breath and focus on what you can control.", "Seek support from friends, it helps to share your feelings."],
+        Depression: ["You are stronger than you think. Hope is always a possibility.", "It's okay to ask for help. Take it one step at a time.", "Remember to take care of yourself, you've got this."],
+        Resources: ["Here are some helpful resources: [List some resources]", "Consider reaching out to a local support group.", "Always know there are people willing to help you."],
+        GeneralSupport: ["Gratitude can change your perspective; focus on the positives.", "Healing is a journey; take it one day at a time.", "Support is around you; don't hesitate to reach out."]
+    };
+
+    // Select a message based on theme
+    const selectedMessages = messages[theme] || messages.GeneralSupport;
+    const contentLength = theme.length;
+    const selectedIndexes = new Set();
+
+    // Select unique messages based on content length
+    while (selectedIndexes.size < 3) {
+        const index = contentLength % selectedMessages.length;
+        selectedIndexes.add(index);
     }
+
+    return Array.from(selectedIndexes).map(index => selectedMessages[index]);
 }
 
-function detectTheme(userInput) {
-    // Simple theme detection logic
-    if (userInput.includes('dark')) {
-        return 'dark';
-    } else if (userInput.includes('light')) {
-        return 'light';
-    }
-    return 'default';
+// Enhanced logging function
+function logError(errorType, message) {
+    const timestamp = new Date().toISOString();
+    console.error(`[${timestamp}] ${errorType}: ${message}`);
 }
 
-async function fetchGeminiResponse(input) {
-    try {
-        const response = await fetch(`https://api.example.com/gemini?model=${modelName}&temperature=${temperature}`, {
-            method: 'POST',
-            body: JSON.stringify({ input }),
-        });
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        contextAwareFallback(error);
-        throw error; // Re-throw after handling
+// API key validation function
+function validateApiKey(apiKey) {
+    if (!apiKey) {
+        logError(ErrorTypes.API_KEY, 'Invalid API key.');
+        return false;
     }
+    // Additional validation logic here...
+    return true;
 }
 
-// Example of using the fetchGeminiResponse function
-fetchGeminiResponse('User input text...')
-    .then(data => console.log('Response:', data))
-    .catch(error => console.error('Error fetching response:', error));
+// Main function where the API is called
+function callApi(apiKey, postContent) {
+    // Validate API key
+    if (!validateApiKey(apiKey)) {
+        return generateFallbackMessages('GeneralSupport');
+    }
+
+    // Simulate calling the API...
+    // Error handling logic...
+}
+
+// Example usage:
+const messages = generateFallbackMessages('Anxiety');
+console.log(messages);
