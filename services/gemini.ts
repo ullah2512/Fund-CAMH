@@ -1,43 +1,65 @@
-// gemini.ts
+import { GoogleGenAI } from "@google/genai";
 
-import axios from 'axios';
-
-const GEMINI_API_URL = 'https://api.gemini.com/v1';
-
-// Error classification
-const ERROR_CODES = {
-    400: 'Bad Request',
-    401: 'Unauthorized',
-    404: 'Not Found',
-    500: 'Internal Server Error'
-};
-
-// Function to make a Gemini API call
-const callGeminiAPI = async (endpoint: string, params: object = {}) => {
-    try {
-        const response = await axios.get(`${GEMINI_API_URL}${endpoint}`, { params });
-        return response.data;
-    } catch (error) {
-        handleErrors(error);
+export const enhancePost = async (content: string, category: string): Promise<string> => {
+  try {
+    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+    
+    if (!apiKey) {
+      console.error("❌ VITE_GEMINI_API_KEY not found in environment");
+      return getContextAwareFallback(content, category);
     }
-};
+    
+    const ai = new GoogleGenAI({ apiKey });
+    
+    const response = await ai.models.generateContent({
+      model: "gemini-2.0-flash",
+      contents: `The following is a community post about ${category}: "${content}"`,
+      config: {
+        systemInstruction: "You are a mental health advocate for the Centre for Addiction and Mental Health (CAMH) community feed. Generate a single, short (max 20 words), empathetic reflection or supportive tip that adds value to this post. Ensure it is professional yet warm. Do not use quotes. Focus on encouragement and resilience. Make each response unique and personalized to the specific content.",
+        temperature: 0.9,
+        topP: 0.95,
+      },
+    });
 
-// Error handling function
-const handleErrors = (error: any) => {
-    const statusCode = error.response ? error.response.status : 500;
-    const errorMessage = ERROR_CODES[statusCode] || 'An unexpected error occurred';
-    console.error(`Error ${statusCode}: ${errorMessage}`);
-    return { status: 'error', message: errorMessage };
-};
-
-// A context-aware fallback function (example usage)
-const getMarketData = async (symbol: string) => {
-    const data = await callGeminiAPI(`/markets/${symbol}/book`);
-    if (!data || data.error) {
-        console.warn('Fallback: Using cached data or default response.');
-        // Implement fallback logic here
+    const reflection = response.text?.trim();
+    if (reflection) {
+      console.log("✅ Gemini: Successfully generated unique reflection");
+      return reflection;
     }
-    return data;
+    
+    return getContextAwareFallback(content, category);
+    
+  } catch (error: any) {
+    console.error("❌ Gemini API Error:", error?.message);
+    return getContextAwareFallback(content, category);
+  }
 };
 
-export { callGeminiAPI, getMarketData };
+const getContextAwareFallback = (content: string, category: string): string => {
+  const fallbacks: Record<string, string[]> = {
+    'Anxiety': [
+      "Your concerns matter. You're taking brave steps to address them.",
+      "Thank you for trusting us with your thoughts. You're not alone.",
+      "Acknowledging anxiety is courageous. You're doing great."
+    ],
+    'Depression': [
+      "Your feelings are valid. Thank you for sharing them with us.",
+      "Taking each moment is an act of strength. You matter.",
+      "You deserve compassion, starting with your own."
+    ],
+    'Resources': [
+      "Thank you for contributing knowledge. Your resources strengthen us all.",
+      "Sharing helpful information is a gift to this community.",
+      "Your resources help others find their path forward."
+    ],
+    'General Support': [
+      "Thank you for sharing. Your voice matters in this community.",
+      "Your experience is valuable. We appreciate your openness.",
+      "Sharing helps us all feel less alone. Thank you."
+    ]
+  };
+  
+  const messages = fallbacks[category] || fallbacks['General Support'];
+  const index = content.length % messages.length;
+  return messages[index];
+};
