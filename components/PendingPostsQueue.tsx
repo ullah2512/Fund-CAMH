@@ -122,12 +122,10 @@ export const PendingPostsQueue: React.FC<PendingPostsQueueProps> = ({
 
       {/* Pending Posts List */}
       <div className="space-y-4">
-        {pendingPosts.map((post) => (
+        {pendingPosts.filter(post => !hiddenPostIds.has(post.id)).map((post) => (
           <div 
             key={post.id}
-            className={`bg-white rounded-2xl shadow-sm border border-yellow-200 overflow-hidden hover:shadow-md transition-all ${
-              hiddenPostIds.has(post.id) ? 'animate-fade-out' : ''
-            }`}
+            className={`bg-white rounded-2xl shadow-sm border border-yellow-200 overflow-hidden hover:shadow-md transition-all`}
           >
             {/* Post Content */}
             <div className="p-6">
