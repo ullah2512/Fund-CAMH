@@ -1,61 +1,43 @@
-import GoogleGenAI from 'some-google-gen-ai-library'; // Adjust the import according to the actual library used
+// gemini.ts
 
-async function enhancePost(post) {
-    const apiKey = process.env.VITE_GEMINI_API_KEY;
-    if (!apiKey) {
-        throw new Error('VITE_GEMINI_API_KEY is not defined');
-    }
+import axios from 'axios';
 
-    const googleGenAI = new GoogleGenAI({
-        apiKey: apiKey,
-        model: 'gemini-2.0-flash',
-        temperature: 0.9,
-    });
+const GEMINI_API_URL = 'https://api.gemini.com/v1';
 
-    const systemInstruction = 'You are a CAMH mental health advocate.';
+// Error classification
+const ERROR_CODES = {
+    400: 'Bad Request',
+    401: 'Unauthorized',
+    404: 'Not Found',
+    500: 'Internal Server Error'
+};
 
+// Function to make a Gemini API call
+const callGeminiAPI = async (endpoint: string, params: object = {}) => {
     try {
-        // Logic to enhance the post goes here
+        const response = await axios.get(`${GEMINI_API_URL}${endpoint}`, { params });
+        return response.data;
     } catch (error) {
-        logError(error);
-        return getFallbackMessages(error);
+        handleErrors(error);
     }
-}
+};
 
-function logError(error) {
-    const timestamp = new Date().toISOString();
-    // Log error with timestamp
-    console.error(`[${timestamp}] Error: ${error.message}`);
-}
+// Error handling function
+const handleErrors = (error: any) => {
+    const statusCode = error.response ? error.response.status : 500;
+    const errorMessage = ERROR_CODES[statusCode] || 'An unexpected error occurred';
+    console.error(`Error ${statusCode}: ${errorMessage}`);
+    return { status: 'error', message: errorMessage };
+};
 
-function getFallbackMessages(error) {
-    const categories = {
-        'Anxiety': [
-            'Remember, it’s okay to feel overwhelmed sometimes.',
-            'Try to take a deep breath and focus on the present.',
-            'You are stronger than you think, and you have support available.'
-        ],
-        'Depression': [
-            'It’s important to reach out to someone who cares.',
-            'Every day may not be good, but there is something good in every day.',
-            'You are not alone in your struggle; help is out there.'
-        ],
-        'Resources': [
-            'Consider checking local resources for mental health support.',
-            'Reach out to a trusted friend or family member for guidance.',
-            'There are many online platforms available for assistance.'
-        ],
-        'General Support': [
-            'You are valued, and your feelings are valid.',
-            'Take one step at a time; you don’t have to do this alone.',
-            'Finding peace within can be a journey worth taking.'
-        ],
-    };
+// A context-aware fallback function (example usage)
+const getMarketData = async (symbol: string) => {
+    const data = await callGeminiAPI(`/markets/${symbol}/book`);
+    if (!data || data.error) {
+        console.warn('Fallback: Using cached data or default response.');
+        // Implement fallback logic here
+    }
+    return data;
+};
 
-    const category = classifyError(error); // You will need to implement this function
-    const messages = categories[category] || categories['General Support'];
-    
-    // Pseudo-random selection based on content length modulo
-    const index = messages.length % 3; // Or your desired logic to randomly select
-    return messages[index];
-}
+export { callGeminiAPI, getMarketData };
