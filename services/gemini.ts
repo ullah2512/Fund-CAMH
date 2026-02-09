@@ -7,7 +7,7 @@ export const enhancePost = async (content: string, category: string): Promise<st
   try {
     // Create a new instance right before the API call as per best practices.
     // Ensure strict named parameter usage for initialization.
-    const ai = new GoogleGenAI({apiKey: import.meta.env.VITE_GEMINI_API_KEY});
+    const ai = new GoogleGenAI({apiKey: import.meta.env.VITE_GEMINI_API_KEY || import.meta.env._VITE_GEMINI_API_KEY});
     
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
