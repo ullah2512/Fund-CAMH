@@ -166,10 +166,9 @@ const App = () => {
                                         Our Mission
                                     </h2>
                                     <p className="text-slate-700 leading-relaxed">
-                                        This project was launched in the memory of those who couldn't get help they needed the most. 
-                                        The mission, should you choose to accept it, is to help fund CAMH, so that anyone, regardless 
-                                        of where they are, how they look, how much they have or don't have, can get the help whenever 
-                                        they need the most.
+                                        This project was launched in memory of those lost to the deafening silence of mental illness. 
+                                        May you rest in peace. Our mission is to fund CAMH, so that everyone—regardless of who they 
+                                        are or what they have—can access the help they need, precisely when they need it most.
                                     </p>
                                 </div>
                             </div>
