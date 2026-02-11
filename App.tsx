@@ -156,6 +156,24 @@ const App = () => {
                         </div>
                     )}
                     <main className="max-w-5xl mx-auto px-4 py-8">
+                        <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl p-8 mb-8 border border-indigo-100 shadow-sm">
+                            <div className="flex items-start gap-4">
+                                <div className="flex-shrink-0 w-12 h-12 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-lg">
+                                    <i className="fa-solid fa-heart-pulse text-xl"></i>
+                                </div>
+                                <div>
+                                    <h2 className="text-xl font-bold text-slate-800 mb-3 flex items-center gap-2">
+                                        Our Mission
+                                    </h2>
+                                    <p className="text-slate-700 leading-relaxed">
+                                        This project was launched in the memory of those who couldn't get help they needed the most. 
+                                        The mission, should you choose to accept it, is to help fund CAMH, so that anyone, regardless 
+                                        of where they are, how they look, how much they have or don't have, can get the help whenever 
+                                        they need the most.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
                         <PostForm onAddPost={handleAddPost} />
                         {moderatorMode && (
                             <PendingPostsQueue
