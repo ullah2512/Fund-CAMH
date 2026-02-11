@@ -17,9 +17,6 @@ export const Header: React.FC<HeaderProps> = ({ isLive = true }) => {
             <h1 className="text-base font-black tracking-tight text-slate-900 leading-none">
               Fund <span className="text-indigo-600">CAMH</span>
             </h1>
-            <p className="text-[9px] text-slate-400 font-bold mt-1 uppercase tracking-[0.15em]">
-              Don't fund me. Go fund CAMH.
-            </p>
           </div>
         </div>
         
