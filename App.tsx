@@ -1,14 +1,13 @@
 import React from 'react';
 
-function App() {
-  return (
-    <div>
-      <h1>Mission Statement</h1>
-      <p>This project was launched in memory of those lost to the deafening silence of mental illness. May you rest in peace.</p>
-      <p>Our mission is to fund CAMH by... [continue with the rest of the mission statement]</p>
-      {/* Other components and elements */}
-    </div>
-  );
-}
+const App = () => {
+    return (
+        <div>
+            <h1>Welcome to Fund-CAMH</h1>
+            <p>This project was launched to address the critical funding needs for CAMH, especially during challenging times.</p>
+            <p>Our Mission is to fund CAMH and support the mental health resources where they are needed most.</p>
+        </div>
+    );
+};
 
 export default App;
