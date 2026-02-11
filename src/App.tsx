@@ -145,7 +145,8 @@ const App = () => {
                                 </div>
                                 <div>
                                     <h2 className="text-xl font-bold text-slate-800 mb-3 flex items-center gap-2"> Our Mission </h2>
-                                    <p className="text-slate-700 leading-relaxed"> This project was launched in memory of those lost to the deafening silence of mental illness. May you rest in peace. Our mission is to fund CAMH, so that everyone—regardless of who they are or what they have—can access the help they need, precisely when they need it most. </p>
+                                    <p className="text-slate-700 leading-relaxed mb-2">This project was launched in memory of those lost to the deafening silence of mental illness. May you rest in peace.</p>
+                                    <p className="text-slate-700 leading-relaxed">Our mission is to fund CAMH, so that everyone—regardless of who they are or what they have—can access the help they need, precisely when they need it most.</p>
                                 </div>
                             </div>
                         </div>
