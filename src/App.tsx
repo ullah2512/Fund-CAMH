@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import PrivacyGate from './components/PrivacyGate';
-import PreviewGate from './components/PreviewGate';
-import ModeratorPasscodeModal from './components/ModeratorPasscodeModal';
-import { Header } from './components/Header';
-import { PostForm } from './components/PostForm';
-import { PostList } from './components/PostList';
-import { PendingPostsQueue } from './components/PendingPostsQueue';
-import { Post, Category } from './types';
-import { api } from './services/api';
+import PrivacyGate from '../components/PrivacyGate';
+import PreviewGate from '../components/PreviewGate';
+import ModeratorPasscodeModal from '../components/ModeratorPasscodeModal';
+import { Header } from '../components/Header';
+import { PostForm } from '../components/PostForm';
+import { PostList } from '../components/PostList';
+import { PendingPostsQueue } from '../components/PendingPostsQueue';
+import { Post, Category } from '../types';
+import { api } from '../services/api';
 
 const App = () => {
     const [privacyAccepted, setPrivacyAccepted] = useState(() => {
