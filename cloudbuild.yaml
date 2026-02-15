@@ -1,0 +1,48 @@
+steps:
+  # Build the Docker image with the Gemini API key passed as a build arg
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '--build-arg'
+      - 'VITE_GEMINI_API_KEY=${_VITE_GEMINI_API_KEY}'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/fund-camh:$COMMIT_SHA'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/fund-camh:latest'
+      - '.'
+
+  # Push the image to Google Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/fund-camh:$COMMIT_SHA']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/fund-camh:latest']
+
+  # Deploy to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'fund-camh'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/fund-camh:$COMMIT_SHA'
+      - '--region'
+      - 'us-central1'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+      - '--port'
+      - '8080'
+
+# Store images in GCR
+images:
+  - 'gcr.io/$PROJECT_ID/fund-camh:$COMMIT_SHA'
+  - 'gcr.io/$PROJECT_ID/fund-camh:latest'
+
+# Substitution variables — set the actual value in Cloud Build trigger settings
+substitutions:
+  _VITE_GEMINI_API_KEY: ''
+
+options:
+  logging: CLOUD_LOGGING_ONLY

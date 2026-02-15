@@ -1,16 +1,44 @@
 
-import React from 'react';
+import React, { useRef, useCallback } from 'react';
 
 interface HeaderProps {
   isLive?: boolean;
+  onModeratorTrigger?: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ isLive = true }) => {
+const TAP_COUNT_THRESHOLD = 5;
+const TAP_TIMEOUT_MS = 2000;
+
+export const Header: React.FC<HeaderProps> = ({ isLive = true, onModeratorTrigger }) => {
+  const tapCountRef = useRef(0);
+  const tapTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleLogoTap = useCallback(() => {
+    tapCountRef.current += 1;
+
+    if (tapTimerRef.current) clearTimeout(tapTimerRef.current);
+    tapTimerRef.current = setTimeout(() => {
+      tapCountRef.current = 0;
+    }, TAP_TIMEOUT_MS);
+
+    if (tapCountRef.current >= TAP_COUNT_THRESHOLD) {
+      tapCountRef.current = 0;
+      if (tapTimerRef.current) clearTimeout(tapTimerRef.current);
+      onModeratorTrigger?.();
+    }
+  }, [onModeratorTrigger]);
+
   return (
     <header className="bg-white/90 backdrop-blur-xl border-b border-slate-200 sticky top-0 z-50">
       <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-indigo-100 shadow-xl transition-transform hover:scale-105">
+          <div
+            onClick={handleLogoTap}
+            role="button"
+            tabIndex={-1}
+            aria-hidden="true"
+            className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-indigo-100 shadow-xl transition-transform hover:scale-105 select-none cursor-pointer"
+          >
             <i className="fa-solid fa-hand-holding-heart"></i>
           </div>
           <div>

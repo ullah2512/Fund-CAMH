@@ -61,17 +61,21 @@ const App = () => {
     useEffect(() => {
         const handleKeyPress = (e: KeyboardEvent) => {
             if (e.ctrlKey && e.shiftKey && e.key === 'M') {
-                const isAuthenticated = sessionStorage.getItem('camh_moderator_authenticated') === 'true';
-                if (!isAuthenticated) {
-                    setShowModeratorPasscodeModal(true);
-                } else {
-                    setModeratorMode(prev => !prev);
-                }
+                handleModeratorTrigger();
             }
         };
         window.addEventListener('keydown', handleKeyPress);
         return () => window.removeEventListener('keydown', handleKeyPress);
-    }, []);
+    }, [moderatorAuthenticated]);
+
+    const handleModeratorTrigger = () => {
+        const isAuthenticated = sessionStorage.getItem('camh_moderator_authenticated') === 'true';
+        if (!isAuthenticated) {
+            setShowModeratorPasscodeModal(true);
+        } else {
+            setModeratorMode(prev => !prev);
+        }
+    };
 
     const handlePreviewUnlock = () => {
         try {
@@ -130,7 +134,7 @@ const App = () => {
         <PrivacyGate privacyAccepted={privacyAccepted} setPrivacyAccepted={setPrivacyAccepted}>
             {previewUnlocked ? (
                 <div className="min-h-screen bg-slate-50">
-                    <Header isLive={true} />
+                    <Header isLive={true} onModeratorTrigger={handleModeratorTrigger} />
                     {moderatorMode && (
                         <div className="fixed top-4 right-4 z-50 bg-red-500 text-white px-4 py-2 rounded-full shadow-lg text-xs font-bold flex items-center gap-2">
                             <span>🛡️</span>

@@ -3,6 +3,10 @@ FROM node:20 AS build
 
 WORKDIR /app
 
+# Accept Gemini API key at build time (Vite inlines it during compile)
+ARG VITE_GEMINI_API_KEY
+ENV VITE_GEMINI_API_KEY=$VITE_GEMINI_API_KEY
+
 # Copy package.json and package-lock.json
 COPY package*.json ./
 
