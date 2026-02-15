@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import PrivacyGate from '../components/PrivacyGate';
 import PreviewGate from '../components/PreviewGate';
 import ModeratorPasscodeModal from '../components/ModeratorPasscodeModal';
+import { PrivacyPolicyModal } from '../components/PrivacyPolicyModal';
+import { ContactModal } from '../components/ContactModal';
 import { Header } from '../components/Header';
 import { PostForm } from '../components/PostForm';
 import { PostList } from '../components/PostList';
@@ -10,14 +11,6 @@ import { Post, Category } from '../types';
 import { api } from '../services/api';
 
 const App = () => {
-    const [privacyAccepted, setPrivacyAccepted] = useState(() => {
-        try {
-            return localStorage.getItem('camh_privacy_accepted') === 'true';
-        } catch {
-            return false;
-        }
-    });
-
     const [previewUnlocked, setPreviewUnlocked] = useState(() => {
         try {
             return localStorage.getItem('camh_preview_unlocked') === 'true';
@@ -131,7 +124,7 @@ const App = () => {
     };
 
     return (
-        <PrivacyGate privacyAccepted={privacyAccepted} setPrivacyAccepted={setPrivacyAccepted}>
+        <>
             {previewUnlocked ? (
                 <div className="min-h-screen bg-slate-50">
                     <Header isLive={true} onModeratorTrigger={handleModeratorTrigger} />
@@ -160,12 +153,17 @@ const App = () => {
                         )}
                         <PostList posts={posts} onDeletePost={handleDeletePost} onToggleHelpful={handleToggleHelpful} moderatorMode={moderatorMode} />
                     </main>
+                    <footer className="max-w-5xl mx-auto px-4 py-6 border-t border-slate-200 flex justify-center gap-6">
+                        <PrivacyPolicyModal />
+                        <span className="text-slate-300">|</span>
+                        <ContactModal />
+                    </footer>
                     <ModeratorPasscodeModal isOpen={showModeratorPasscodeModal} onClose={() => setShowModeratorPasscodeModal(false)} onSuccess={handleModeratorAuthentication} />
                 </div>
             ) : (
                 <PreviewGate onUnlock={handlePreviewUnlock} />
             )}
-        </PrivacyGate>
+        </>
     );
 };
 export default App;
