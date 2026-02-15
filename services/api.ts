@@ -140,14 +140,14 @@ export const api = {
   },
 
   /**
-   * Increments the helpful count for a post globally.
+   * Toggles the helpful count for a post (increment or decrement by 1).
    */
-  async toggleHelpful(id: string): Promise<void> {
+  async toggleHelpful(id: string, delta: 1 | -1 = 1): Promise<void> {
     if (!isConfigured || !db) return;
     try {
       const postRef = doc(db, POSTS_COLLECTION, id);
       await updateDoc(postRef, {
-        helpfulCount: increment(1)
+        helpfulCount: increment(delta)
       });
     } catch (error) {
       console.error("Firestore Error [toggleHelpful]:", error);

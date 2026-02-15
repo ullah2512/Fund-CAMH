@@ -93,9 +93,9 @@ const App = () => {
         }
     };
 
-    const handleToggleHelpful = async (id: string) => {
+    const handleToggleHelpful = async (id: string, delta: 1 | -1) => {
         try {
-            await api.toggleHelpful(id);
+            await api.toggleHelpful(id, delta);
         } catch (error) {
             console.error('Failed to toggle helpful:', error);
         }

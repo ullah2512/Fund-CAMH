@@ -2,16 +2,57 @@
 import React, { useState } from 'react';
 import { Post } from '../types';
 
+// Helper to get/set hearted post IDs in localStorage
+const HEARTED_KEY = 'camh_hearted_posts';
+
+function getHeartedPosts(): Set<string> {
+  try {
+    const stored = localStorage.getItem(HEARTED_KEY);
+    return stored ? new Set(JSON.parse(stored)) : new Set();
+  } catch {
+    return new Set();
+  }
+}
+
+function saveHeartedPosts(hearted: Set<string>) {
+  try {
+    localStorage.setItem(HEARTED_KEY, JSON.stringify([...hearted]));
+  } catch {
+    // Silently ignore
+  }
+}
+
 interface PostListProps {
   posts: Post[];
   onDeletePost: (id: string) => void;
-  onToggleHelpful: (id: string) => void;
+  onToggleHelpful: (id: string, delta: 1 | -1) => void;
   moderatorMode: boolean;
 }
 
 export const PostList: React.FC<PostListProps> = ({ posts, onDeletePost, onToggleHelpful, moderatorMode }) => {
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [isAnimatingId, setIsAnimatingId] = useState<string | null>(null);
+  const [heartedPosts, setHeartedPosts] = useState<Set<string>>(() => getHeartedPosts());
+
+  const handleToggleHelpful = (id: string) => {
+    const isCurrentlyHearted = heartedPosts.has(id);
+    const post = posts.find(p => p.id === id);
+    const currentCount = post?.helpfulCount || 0;
+
+    // If not hearted yet, block if already at cap of 50
+    if (!isCurrentlyHearted && currentCount >= 50) return;
+
+    const newHearted = new Set(heartedPosts);
+    if (isCurrentlyHearted) {
+      newHearted.delete(id);
+      onToggleHelpful(id, -1);
+    } else {
+      newHearted.add(id);
+      onToggleHelpful(id, 1);
+    }
+    setHeartedPosts(newHearted);
+    saveHeartedPosts(newHearted);
+  };
 
   const handleTriggerDelete = (id: string) => {
     // If not already in confirm state, switch to confirm state
@@ -132,14 +173,14 @@ export const PostList: React.FC<PostListProps> = ({ posts, onDeletePost, onToggl
               <div className="flex items-center gap-4">
                 <button 
                   type="button"
-                  onClick={() => onToggleHelpful(post.id)}
+                  onClick={() => handleToggleHelpful(post.id)}
                   className={`transition-all duration-300 flex items-center gap-2 px-3 py-1.5 rounded-full border group/btn active:scale-90 ${
-                    (post.helpfulCount || 0) > 0 
+                    heartedPosts.has(post.id)
                       ? 'bg-indigo-50 border-indigo-100 text-indigo-600' 
                       : 'bg-white border-slate-100 text-slate-400 hover:border-indigo-200 hover:text-indigo-600'
                   }`}
                 >
-                  <i className={`${(post.helpfulCount || 0) > 0 ? 'fa-solid' : 'fa-regular'} fa-heart group-hover/btn:scale-125 transition-transform`}></i>
+                  <i className={`${heartedPosts.has(post.id) ? 'fa-solid' : 'fa-regular'} fa-heart group-hover/btn:scale-125 transition-transform`}></i>
                   <span className="text-xs font-bold">{(post.helpfulCount || 0) > 0 ? post.helpfulCount : 'Helpful'}</span>
                 </button>
               </div>
