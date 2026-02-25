@@ -37,13 +37,16 @@ export const Header: React.FC<HeaderProps> = ({ isLive = true, onModeratorTrigge
             role="button"
             tabIndex={-1}
             aria-hidden="true"
-            className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-indigo-100 shadow-xl transition-transform hover:scale-105 select-none cursor-pointer"
+            className="w-14 h-14 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-indigo-100 shadow-xl transition-transform hover:scale-105 select-none cursor-pointer"
           >
-            <i className="fa-solid fa-hand-holding-heart"></i>
+            <span className="relative">
+              <i className="fa-solid fa-hand-fist text-2xl"></i>
+              <i className="fa-solid fa-fire text-xs absolute -top-2.5 -right-2.5 text-orange-300"></i>
+            </span>
           </div>
           <div>
             <h1 className="text-base font-black tracking-tight text-slate-900 leading-none">
-              Fund <span className="text-indigo-600">CAMH</span>
+              Hear The <span className="text-indigo-600">Fight</span>
             </h1>
           </div>
         </div>
@@ -63,7 +66,7 @@ export const Header: React.FC<HeaderProps> = ({ isLive = true, onModeratorTrigge
             className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 md:px-6 py-2.5 rounded-xl font-bold transition-all shadow-lg shadow-indigo-200 hover:shadow-indigo-300 flex items-center gap-2 text-xs md:text-sm active:scale-95"
           >
             <i className="fa-solid fa-heart-pulse animate-pulse"></i>
-            Donate Now
+            Donate to CAMH
           </a>
         </div>
       </div>

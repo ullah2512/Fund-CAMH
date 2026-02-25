@@ -142,8 +142,16 @@ const App = () => {
                                 </div>
                                 <div>
                                     <h2 className="text-xl font-bold text-slate-800 mb-3 flex items-center gap-2"> Our Mission </h2>
-                                    <p className="text-slate-700 leading-relaxed mb-2">This project was launched in memory of those lost to the deafening silence of mental illness. May you rest in peace.</p>
-                                    <p className="text-slate-700 leading-relaxed">Our mission is to fund CAMH, so that everyone—regardless of who they are or what they have—can access the help they need, precisely when they need it most.</p>
+                                    <p className="text-slate-700 leading-relaxed mb-2">This project was launched in memory of those who fought mental illness in silence — and lost. May you rest in peace.</p>
+                                    <p className="text-slate-700 leading-relaxed mb-4">Here is what we are fighting for:</p>
+                                    <ol className="list-decimal list-inside text-slate-700 leading-relaxed space-y-2">
+                                        <li>Secure more funding for organizations like CAMH — via donations and earmarked funds from the government.</li>
+                                        <li>Push for Ontario disability benefits that people can actually live on.</li>
+                                        <li>Simplify the short-term disability process — one built around compassion, not judgement and deadlines.</li>
+                                        <li>Bring therapy to patients' doors — so no one has to worry about accessing their own treatment.</li>
+                                        <li>Build a financial support hub for patients — so no one has to choose between managing their health and keeping a roof over their head.</li>
+                                        <li>Clean house in mental health care — patients deserve professionals who show up with compassion, not judgement and indifference. Those who don't should find a different profession.</li>
+                                    </ol>
                                 </div>
                             </div>
                         </div>
