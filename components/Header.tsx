@@ -46,8 +46,11 @@ export const Header: React.FC<HeaderProps> = ({ isLive = true, onModeratorTrigge
           </div>
           <div>
             <h1 className="text-base font-black tracking-tight text-slate-900 leading-none">
-              Hear The <span className="text-indigo-600">Fight</span>
+              Join The <span className="text-indigo-600">Crusade</span>
             </h1>
+            <p className="text-xs font-bold tracking-wide text-indigo-500 mt-0.5">
+              Saving Souls — Mental Health Is the Mission
+            </p>
           </div>
         </div>
         
