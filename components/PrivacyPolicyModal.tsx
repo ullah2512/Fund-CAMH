@@ -44,9 +44,9 @@ export const PrivacyPolicyModal: React.FC = () => {
             <div>
               <h3 className="text-lg font-bold text-slate-900 mb-2">About This Platform</h3>
               <p className="text-slate-600 text-sm leading-relaxed">
-                This is an independent community platform that supports CAMH Foundation through fundraising. 
-                This platform is not officially affiliated with or endorsed by CAMH. The project is community-driven 
-                and all fundraising proceeds are directed to CAMH to support mental health initiatives.
+                This is an independent community platform fighting for better mental health funding, benefits, and care in Canada. 
+                It is not officially affiliated with or endorsed by any organization. The project is community-driven 
+                and aims to direct support toward mental health initiatives — including organizations like CAMH.
               </p>
             </div>
 
