@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import PreviewGate from '../components/PreviewGate';
 import ModeratorPasscodeModal from '../components/ModeratorPasscodeModal';
 import { PrivacyPolicyModal } from '../components/PrivacyPolicyModal';
 import { ContactModal } from '../components/ContactModal';
@@ -11,14 +10,6 @@ import { Post, Category } from '../types';
 import { api } from '../services/api';
 
 const App = () => {
-    const [previewUnlocked, setPreviewUnlocked] = useState(() => {
-        try {
-            return localStorage.getItem('camh_preview_unlocked') === 'true';
-        } catch {
-            return false;
-        }
-    });
-
     const [posts, setPosts] = useState<Post[]>([]);
     const [pendingPosts, setPendingPosts] = useState<Post[]>([]);
     const [moderatorMode, setModeratorMode] = useState(false);
@@ -32,16 +23,14 @@ const App = () => {
     });
 
     useEffect(() => {
-        if (previewUnlocked) {
-            const unsubscribe = api.subscribeToPosts((newPosts) => {
-                setPosts(newPosts);
-            });
-            return unsubscribe;
-        }
-    }, [previewUnlocked]);
+        const unsubscribe = api.subscribeToPosts((newPosts) => {
+            setPosts(newPosts);
+        });
+        return unsubscribe;
+    }, []);
 
     useEffect(() => {
-        if (previewUnlocked && moderatorMode) {
+        if (moderatorMode) {
             const unsubscribe = api.subscribeToPendingPosts((newPendingPosts) => {
                 setPendingPosts(newPendingPosts);
             });
@@ -49,7 +38,7 @@ const App = () => {
         } else {
             setPendingPosts([]);
         }
-    }, [previewUnlocked, moderatorMode]);
+    }, [moderatorMode]);
 
     useEffect(() => {
         const handleKeyPress = (e: KeyboardEvent) => {
@@ -68,13 +57,6 @@ const App = () => {
         } else {
             setModeratorMode(prev => !prev);
         }
-    };
-
-    const handlePreviewUnlock = () => {
-        try {
-            localStorage.setItem('camh_preview_unlocked', 'true');
-        } catch {}
-        setPreviewUnlocked(true);
     };
 
     const handleAddPost = async (content: string, category: Category, aiReflection: string) => {
@@ -125,7 +107,6 @@ const App = () => {
 
     return (
         <>
-            {previewUnlocked ? (
                 <div className="min-h-screen bg-slate-50">
                     <Header isLive={true} onModeratorTrigger={handleModeratorTrigger} />
                     {moderatorMode && (
@@ -142,7 +123,7 @@ const App = () => {
                                 </div>
                                 <div>
                                     <h2 className="text-xl font-bold text-slate-800 mb-3 flex items-center gap-2"> Our Mission </h2>
-                                    <p className="text-slate-700 leading-relaxed mb-2">This project was launched in memory of those who fought mental illness in silence — and lost. May you rest in peace.</p>
+                                    <p className="text-slate-700 leading-relaxed mb-2">This project was launched in memory of those handed an impossible mission — to fight mental illness alone. May you rest in peace.</p>
                                     <p className="text-slate-700 leading-relaxed mb-4">Here is what we are fighting for:</p>
                                     <ol className="list-decimal list-inside text-slate-700 leading-relaxed space-y-2">
                                         <li>Secure more funding for organizations like CAMH — via donations and earmarked funds from the government.</li>
@@ -168,9 +149,6 @@ const App = () => {
                     </footer>
                     <ModeratorPasscodeModal isOpen={showModeratorPasscodeModal} onClose={() => setShowModeratorPasscodeModal(false)} onSuccess={handleModeratorAuthentication} />
                 </div>
-            ) : (
-                <PreviewGate onUnlock={handlePreviewUnlock} />
-            )}
         </>
     );
 };

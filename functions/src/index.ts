@@ -11,7 +11,7 @@ const gmailAppPassword = defineSecret("GMAIL_APP_PASSWORD");
 // ─── Configuration ───────────────────────────────────────────────
 const SENDER_EMAIL = "ullah2512@gmail.com";
 const MODERATOR_EMAIL = "missionnasman@gmail.com";
-const APP_URL = "https://fund-camh-24730708044.us-central1.run.app"; // Cloud Run URL
+const APP_URL = "https://forthoseweholdclose.org"; // Custom domain
 
 // ─── Firestore Trigger: New Post Created ─────────────────────────
 export const onNewPostCreated = onDocumentCreated(
