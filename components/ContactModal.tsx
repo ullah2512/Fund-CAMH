@@ -46,17 +46,17 @@ export const ContactModal: React.FC = () => {
               <div>
                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1">Email</p>
                 <a
-                  href="mailto:missionnasman@gmail.com"
+                  href="mailto:ullah.nas@outlook.com"
                   className="text-indigo-600 hover:text-indigo-700 font-semibold text-sm transition-colors"
                 >
-                  missionnasman@gmail.com
+                  ullah.nas@outlook.com
                 </a>
               </div>
             </div>
 
             <div className="border-t border-slate-200 pt-4">
               <p className="text-slate-600 text-sm leading-relaxed">
-                Whether you have questions about the platform, want to report an issue, or would like to get involved in supporting CAMH — reach out and we'll get back to you as soon as possible.
+                Whether you have questions about the platform, want to report an issue, or would like to get involved in supporting mental health initiatives — reach out and we'll get back to you as soon as possible.
               </p>
             </div>
           </div>
@@ -64,7 +64,7 @@ export const ContactModal: React.FC = () => {
           {/* Action Buttons */}
           <div className="flex flex-col gap-3">
             <a
-              href="mailto:missionnasman@gmail.com"
+              href="mailto:ullah.nas@outlook.com"
               className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-5 rounded-2xl shadow-xl transition-all active:scale-95 flex items-center justify-center gap-3 text-lg no-underline"
             >
               <i className="fa-solid fa-paper-plane text-sm"></i>
